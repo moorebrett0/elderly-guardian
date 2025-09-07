@@ -1,0 +1,21 @@
+name: yolov8lpose-fall-detector
+
+pipeline:
+  - poses:
+      model_name: yolov8lpose-coco
+      preprocess:
+        - letterbox:
+            width: 640
+            height: 640
+        - torch-totensor:
+      postprocess:
+        - decodeyolopose:
+            box_format: xywh
+            normalized_coord: false
+            label_filter: [person]
+            conf_threshold: 0.3
+            nms_iou_threshold: 0.5
+        - posetracker:
+            algorithm: oc-sort
+            history_length: 30
+

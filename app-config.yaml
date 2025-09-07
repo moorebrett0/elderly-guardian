@@ -1,0 +1,5 @@
+# /home/aetina/fall_detection_app/app-config.yaml
+config:
+  data_root: /home/aetina/voyager-sdk
+  pipeline_path: /home/aetina/fall_detection_app/yolov8lpose-fall-detector.yaml
+  source: "usb:/dev/video20:1280x720@30"
