@@ -13,6 +13,7 @@ This system watches a Logitech C920 video feed using computer vision to detect f
 - **Camera**: Logitech C920 (USB, 1280×720@30fps recommended)
 - **Wi-Fi**: Edimax EW-7822UAC (AC1200 USB)
 - **Smart Plug**: TP-Link Kasa (e.g., KP115) for alerts/automations
+- **Amazon Echo Dot**: for voice alerts, and real world communication
 
 ### Why This Hardware Combo?
 
@@ -94,13 +95,8 @@ cd /home/aetina/fall_detection_app
 source venv/bin/activate
 
 python3 fall_detection.py app-config.yaml \
-  --floor-band-pct 0.22 --ankle-floor-band 0.20 --hips-floor-band 0.15 \
-  --descent-window 1.0 --require-descent-px 55 --bottom-descent-px 30 \
-  --prone-confirm-frames 6 \
-  --prox-height-frac 0.55 --prox-area-frac 0.28 --retreat-area-drop-frac 0.10 \
-  --min-area 90000 --max-area 250000 --min-conf 0.65 --min-kp-visible 8 \
-  --fall-latch-seconds 7 --recovery-frames 10 --recovery-upright-deg 20 --recovery-ascend-px 50 \
-  --kasa-ip 10.0.0.214 --kasa-on-seconds 5 --kasa-cooldown 30 --fall-frames 5 \
+  --min-area 90000 --max-area 220000 --min-conf 0.65 --min-kp-visible 8 \
+  --kasa-ip 10.x.x.x --kasa-on-seconds 5 --kasa-cooldown 30 --fall-frames 5 \
   --out /home/aetina/fall_demo.mp4 --log INFO
 ```
 
@@ -142,7 +138,7 @@ The system pulses the Kasa smart plug (ON → OFF) when falls are detected, whic
 ### Fall Detection Logic
 
 **Quality Filters**:
-- Bounding box area: 90,000 - 250,000 pixels²
+- Bounding box area: 90,000 - 220,000 pixels²
 - Pose confidence ≥ 0.65
 - Minimum 8 visible keypoints (confidence ≥ 0.35)
 
@@ -189,16 +185,6 @@ export GST_PLUGIN_PATH="$AXELERA_FRAMEWORK/gst:$GST_PLUGIN_PATH"
 
 ### Performance Tuning
 
-**Reduce false positives near camera**:
-```bash
---prox-height-frac 0.60 --prox-area-frac 0.32
-```
-
-**Improve soft fall detection**:
-```bash
---prone-confirm-frames 4 --floor-band-pct 0.25
-```
-
 **Reduce USB bandwidth (if needed)**:
 ```yaml
 source: "usb:/dev/video20:640x480@30"
@@ -225,10 +211,7 @@ ExecStart=/home/aetina/fall_detection_app/venv/bin/python3 \
   /home/aetina/fall_detection_app/fall_detection.py \
   /home/aetina/fall_detection_app/app-config.yaml \
   --out /home/aetina/fall_demo.mp4 --log INFO \
-  --kasa-ip 10.0.0.214 --kasa-on-seconds 5 --kasa-cooldown 30 \
-  --floor-band-pct 0.22 --ankle-floor-band 0.20 --hips-floor-band 0.15 \
-  --descent-window 1.0 --require-descent-px 55 --bottom-descent-px 30 \
-  --prone-confirm-frames 6 --fall-latch-seconds 7
+  --kasa-ip 10.0.0.214 --kasa-on-seconds 5 --kasa-cooldown 30
 Restart=on-failure
 
 [Install]
